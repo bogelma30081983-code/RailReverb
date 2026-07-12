@@ -234,18 +234,27 @@ juce::AudioProcessorValueTreeState::ParameterLayout RailReverbProcessor::createP
 {
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
 
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{ "SIZE", 1 }, "Rail Size", 0.0f, 1.0f, 0.6f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{ "SIZE", 1 },
+        "Rail Size", 0.0f, 1.0f, 0.6f));
 
-    juce::StringArray mats{ "Iron", "Copper", "Brass", "Silver", "Gold", "Tungsten", "Titanium", "Bog Oak", "Uranium" };
-    params.push_back(std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{ "MATERIAL", 1 }, "Material", mats, 0));
+    juce::StringArray mats{ "Iron", "Copper", "Brass", "Silver", "Gold", "Tungsten",
+        "Titanium", "Bog Oak", "Uranium" };
+    params.push_back(std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{ "MATERIAL", 1 }, 
+        "Material", mats, 0));
 
-    params.push_back(std::make_unique<juce::AudioParameterBool>(juce::ParameterID{ "DRIFT", 1 }, "Analog Drift", false));
-    params.push_back(std::make_unique<juce::AudioParameterBool>(juce::ParameterID{ "NOISE", 1 }, "Analog Noise", false));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{ "DETUNE", 1 }, "Detune", 0.0f, 10.0f, 1.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{ "CUTOFF", 1 }, "Filter Cutoff", 
+    params.push_back(std::make_unique<juce::AudioParameterBool>(juce::ParameterID{ "DRIFT", 1 },
+        "Analog Drift", false));
+    params.push_back(std::make_unique<juce::AudioParameterBool>(juce::ParameterID{ "NOISE", 1 }, 
+        "Analog Noise", false));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{ "DETUNE", 1 }, 
+        "Detune", 0.0f, 10.0f, 1.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{ "CUTOFF", 1 }, 
+        "Filter Cutoff", 
         juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 0.3f), 5000.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{ "MIX", 1 }, "Mix", 0.0f, 1.0f, 0.3f));
-    params.push_back(std::make_unique<juce::AudioParameterBool>(juce::ParameterID{ "AUTO_COMP", 1 }, "Auto Volume Comp", true));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{ "MIX", 1 }, 
+        "Mix", 0.0f, 1.0f, 0.3f));
+    params.push_back(std::make_unique<juce::AudioParameterBool>(juce::ParameterID{ "AUTO_COMP", 1 }, 
+        "Auto Volume Comp", true));
 
     return { params.begin(), params.end() };
 
