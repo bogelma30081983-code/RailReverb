@@ -196,7 +196,20 @@ void RailReverbProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
         buffer.applyGain(currentGainComp);
     }
 }
+void RailReverbProcessor::getStateInformation(juce::MemoryBlock& destData)
+{
+    auto state = apvts.copyState();
+    std::unique_ptr<juce::XmlElement> xml(state.createXml());
+    copyXmlToBinary(*xml, destData);
+}
 
+void RailReverbProcessor::setStateInformation(const void* data, int sizeInBytes)
+{
+    std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+    if (xmlState.get() != nullptr)
+        if (xmlState->hasTagName(apvts.state.getType()))
+            apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
+}
 // Зв'язок з вікном інтерфейсу
 juce::AudioProcessorEditor* RailReverbProcessor::createEditor()
 {
@@ -217,7 +230,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout RailReverbProcessor::createP
     params.push_back(std::make_unique<juce::AudioParameterBool>(juce::ParameterID{ "DRIFT", 1 }, "Analog Drift", false));
     params.push_back(std::make_unique<juce::AudioParameterBool>(juce::ParameterID{ "NOISE", 1 }, "Analog Noise", false));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{ "DETUNE", 1 }, "Detune", 0.0f, 10.0f, 1.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{ "CUTOFF", 1 }, "Filter Cutoff", juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 0.3f), 5000.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{ "CUTOFF", 1 }, "Filter Cutoff", 
+        juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 0.3f), 5000.0f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{ "MIX", 1 }, "Mix", 0.0f, 1.0f, 0.3f));
     params.push_back(std::make_unique<juce::AudioParameterBool>(juce::ParameterID{ "AUTO_COMP", 1 }, "Auto Volume Comp", true));
 
