@@ -42,6 +42,8 @@ void RailReverbProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     driftPhaseL = 0.0f;
     driftPhaseR = 0.5f;
     writePos = 0;
+    // Заздалегідь виділяємо залізне місце в пам'яті під потрібну кількість каналів та семплів
+    wetBuffer.setSize(getTotalNumOutputChannels(), samplesPerBlock);
 }
 
 void RailReverbProcessor::releaseResources()
@@ -72,8 +74,18 @@ void RailReverbProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
     MaterialProperties props = MaterialPresets[materialIdx];
     inputLowPass.setCutoffFrequency(cutoff);
 
-    juce::AudioBuffer<float> wetBuffer;
-    wetBuffer.makeCopyOf(buffer);
+    /*juce::AudioBuffer<float> wetBuffer;
+    wetBuffer.makeCopyOf(buffer);*/
+
+    // Рядки 75-76 тепер виглядатимуть так:
+    // Переконуємося, що розмір збігається (якщо він той самий, JUCE не буде чіпати пам'ять)
+    wetBuffer.setSize(buffer.getNumChannels(), buffer.getNumSamples(), false, false, true);
+
+    // Безпечно копіюємо аудіо з основного буфера в наш постійний wetBuffer
+    for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
+    {
+        wetBuffer.copyFrom(channel, 0, buffer.getReadPointer(channel), buffer.getNumSamples());
+    }
 
     juce::dsp::AudioBlock<float> block(wetBuffer);
     juce::dsp::ProcessContextReplacing<float> context(block);

@@ -68,6 +68,8 @@ public:
     juce::AudioProcessorValueTreeState apvts;
 
 private:
+    juce::AudioBuffer<float> wetBuffer;
+
     double currentSampleRate = 44100.0;
     int writePos = 0;
     juce::AudioBuffer<float> delayLinesL[4];
